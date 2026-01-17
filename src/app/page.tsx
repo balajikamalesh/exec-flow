@@ -1,7 +1,11 @@
-const Page = () => {
+import db from "@/lib/db";
+
+const Page = async () => {
+  const xx = await db.user.findMany();
+  
   return (
     <div>
-      Hello Worlds
+      {JSON.stringify(xx)}
     </div>
   )
 }
