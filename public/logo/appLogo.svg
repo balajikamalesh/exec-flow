@@ -1,0 +1,75 @@
+<svg
+  width="260"
+  height="120"
+  viewBox="0 0 260 120"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Paths -->
+  <path
+    d="M40 60 L120 60"
+    fill="none"
+    stroke="#8a79ab"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M120 60 C160 60, 170 30, 220 30"
+    fill="none"
+    stroke="#8a79ab"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M120 60 C160 60, 170 90, 220 90"
+    fill="none"
+    stroke="#8a79ab"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+
+  <!-- Node A -->
+  <circle cx="40" cy="60" r="11" fill="#8a79ab">
+    <animate
+      attributeName="opacity"
+      values="0.3;1;0.3"
+      keyTimes="0;0.15;1"
+      dur="1.5s"
+      repeatCount="indefinite"
+    />
+  </circle>
+
+  <!-- Node B -->
+  <circle cx="120" cy="60" r="11" fill="#8a79ab">
+    <animate
+      attributeName="opacity"
+      values="0.3;0.3;1;0.3"
+      keyTimes="0;0.25;0.4;1"
+      dur="1.5s"
+      repeatCount="indefinite"
+    />
+  </circle>
+
+  <!-- Node C -->
+  <circle cx="220" cy="30" r="11" fill="#8a79ab">
+    <animate
+      attributeName="opacity"
+      values="0.3;0.3;0.3;1;0.3"
+      keyTimes="0;0.45;0.55;0.7;1"
+      dur="1.5s"
+      repeatCount="indefinite"
+    />
+  </circle>
+
+  <!-- Node D -->
+  <circle cx="220" cy="90" r="11" fill="#8a79ab">
+    <animate
+      attributeName="opacity"
+      values="0.3;0.3;0.3;1;0.3"
+      keyTimes="0;0.45;0.55;0.7;1"
+      dur="1.5s"
+      repeatCount="indefinite"
+    />
+  </circle>
+</svg>
