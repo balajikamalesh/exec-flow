@@ -3,6 +3,12 @@ import { protectedProcedure, createTRPCRouter } from "../init";
 import db from "@/lib/db";
 
 export const appRouter = createTRPCRouter({
+  testAi: protectedProcedure.mutation(async () => {
+    await inngest.send({
+      name: "execute/ai"
+    })
+    return { success: true, message: "AI execution initiated." };
+  }),
   getWorkflows: protectedProcedure.query(({ ctx }) => {
     return db.workflow.findMany();
   }),

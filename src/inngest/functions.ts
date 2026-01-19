@@ -1,18 +1,49 @@
 import db from "@/lib/db";
 import { inngest } from "./client";
+import { generateText } from "ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createOpenAI } from "@ai-sdk/openai";
+import { createAnthropic } from "@ai-sdk/anthropic";
 
-export const helloWorld = inngest.createFunction(
-  { id: "hello-world" },
-  { event: "test/hello.world" },
+const google = createGoogleGenerativeAI();
+const openai = createOpenAI();
+const anthropic = createAnthropic();
+
+export const execute = inngest.createFunction(
+  { id: "execute-ai" },
+  { event: "execute/ai" },
   async ({ event, step }) => {
-    await step.sleep("wait-10s", "5s"); // this is passed while invoking the function
-    await step.run("create-workflow", () => {
-        // creating workflow inside the inngest background function
-        return db.workflow.create({
-        data: {
-          name: "New Workflow",
-        },
-      });
-    });
+    const { steps: geminiSteps } = await step.ai.wrap(
+      "gemini-generate-text",
+      generateText,
+      {
+        model: google("gemini-2.0-flash"),
+        system: "You are a helpful assistant",
+        prompt: "Write a short poem about the sea.",
+      },
+    );
+    const { steps: openaiSteps } = await step.ai.wrap(
+      "openai-generate-text",
+      generateText,
+      {
+        model: openai("gpt-4o"),
+        system: "You are a helpful assistant",
+        prompt: "Write a short poem about the sea.",
+      },
+    );
+    const { steps: anthropicSteps } = await step.ai.wrap(
+      "anthropic-generate-text",
+      generateText,
+      {
+        model: anthropic("claude-2"),
+        system: "You are a helpful assistant",
+        prompt: "Write a short poem about the sea.",
+      },
+    );
+    return {
+      geminiSteps,
+      openaiSteps,
+      anthropicSteps,
+    };
   },
 );

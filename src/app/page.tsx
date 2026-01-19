@@ -13,6 +13,8 @@ const Page = () => {
     trpc.getWorkflows.queryOptions(),
   );
 
+  const testAi = useMutation(trpc.testAi.mutationOptions());
+
   const { mutate: createWorkflow, isPending: isCreatePending } = useMutation(
     trpc.createWorkflow.mutationOptions({
       onSuccess: () => {
@@ -27,6 +29,12 @@ const Page = () => {
     <div className="min-h-screen flex flex-col items-center justify-center gap-y-6">
       protected server component
       <div>{JSON.stringify(workflows, null, 2)}</div>
+      <Button
+        onClick={() => testAi.mutate()}
+        disabled={testAi.isPending}
+      >
+        Test AI
+      </Button>
       <Button onClick={() => createWorkflow()} disabled={isPending}>
         Create workflow
       </Button>
