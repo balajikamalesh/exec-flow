@@ -1,13 +1,19 @@
+import { inngest } from "@/inngest/client";
 import { protectedProcedure, createTRPCRouter } from "../init";
 import db from "@/lib/db";
 
 export const appRouter = createTRPCRouter({
-  getUsers: protectedProcedure.query(({ ctx }) => {
-    return db.user.findMany({
-      where: { 
-        id: ctx.auth.user.id 
+  getWorkflows: protectedProcedure.query(({ ctx }) => {
+    return db.workflow.findMany();
+  }),
+  createWorkflow: protectedProcedure.mutation(async () => {
+    await inngest.send({
+      name: "test/hello.world", // event name defined in the function
+      data: {
+        email: "user@example.com",
       },
     });
+    return { success: true, message: "Workflow creation initiated." };
   }),
 });
 
