@@ -20,6 +20,11 @@ export const execute = inngest.createFunction(
         model: google("gemini-2.0-flash"),
         system: "You are a helpful assistant",
         prompt: "Write a short poem about the sea.",
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       },
     );
     const { steps: openaiSteps } = await step.ai.wrap(
@@ -29,6 +34,11 @@ export const execute = inngest.createFunction(
         model: openai("gpt-4o"),
         system: "You are a helpful assistant",
         prompt: "Write a short poem about the sea.",
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       },
     );
     const { steps: anthropicSteps } = await step.ai.wrap(
@@ -38,11 +48,16 @@ export const execute = inngest.createFunction(
         model: anthropic("claude-2"),
         system: "You are a helpful assistant",
         prompt: "Write a short poem about the sea.",
+        experimental_telemetry: {
+          isEnabled: true,
+          recordInputs: true,
+          recordOutputs: true,
+        },
       },
     );
     return {
       geminiSteps,
-      openaiSteps,
+      // openaiSteps,
       anthropicSteps,
     };
   },
