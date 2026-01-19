@@ -53,7 +53,7 @@ const LoginForm = () => {
         router.push("/");
       },
       onError: () => {
-        toast.error(`Login failed}`);
+        toast.error("Login failed");
       },
     })
   };
@@ -64,7 +64,7 @@ const LoginForm = () => {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle>Welcome Back!</CardTitle>
+          <CardTitle>Welcome Back to <span className="font-bold text-lg text-[#8a79ab]">ExecFlow</span></CardTitle>
           <CardDescription>Login to Continue</CardDescription>
         </CardHeader>
         <CardContent>

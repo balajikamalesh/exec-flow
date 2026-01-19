@@ -69,7 +69,7 @@ const RegisterForm = () => {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle>Get started</CardTitle>
+          <CardTitle>Get started with <span className="font-bold text-lg text-[#8a79ab]">ExecFlow</span></CardTitle>
           <CardDescription>Create an account to continue</CardDescription>
         </CardHeader>
         <CardContent>
