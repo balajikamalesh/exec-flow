@@ -52,6 +52,22 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
     [],
   );
 
+  const GRID = 20;
+
+  const snapToGrid = (position: { x: number; y: number }) => ({
+    x: Math.round(position.x / GRID) * GRID,
+    y: Math.round(position.y / GRID) * GRID,
+  });
+
+  // for smmoother dragging experience, but align to grid on drag stop
+  const onNodeDragStop = (_: any, node: Node) => {
+    setNodes((nds) =>
+      nds.map((n) =>
+        n.id === node.id ? { ...n, position: snapToGrid(node.position) } : n,
+      ),
+    );
+  };
+
   return (
     <div className="size-full">
       <ReactFlow
@@ -61,9 +77,11 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeComponents}
+        onNodeDragStop={onNodeDragStop}
         fitView
       >
-        <Background />
+        <Background gap={20}   // MUST match GRID
+    size={1}/>
         <Controls />
         <MiniMap />
         <Panel position="top-right">
