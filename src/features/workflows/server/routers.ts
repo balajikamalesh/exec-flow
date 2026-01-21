@@ -28,9 +28,14 @@ export const workflowsRouter = createTRPCRouter({
       });
     }),
   updateName: protectedProcedure
-    .input(z.object({ id: z.string(), name: z.string() }))
+    .input(z.object({ 
+      id: z.string(), 
+      name: z.string()
+        .min(2, { message: "Workflow name must be at least 2 characters" })
+        .max(100, { message: "Workflow name must be at most 100 characters" }) 
+    }))
     .mutation(async ({ ctx, input }) => {
-      return db.workflow.updateMany({
+      return db.workflow.update({
         where: {
           id: input.id,
           userId: ctx.auth.user.id, // only allow owner to update
@@ -43,7 +48,7 @@ export const workflowsRouter = createTRPCRouter({
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return db.workflow.findUnique({
+      return db.workflow.findUniqueOrThrow({
         where: {
           id: input.id,
           userId: ctx.auth.user.id, // only allow owner to fetch
