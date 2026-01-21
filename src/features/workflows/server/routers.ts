@@ -12,7 +12,7 @@ export const workflowsRouter = createTRPCRouter({
   create: premiumProcedure.mutation(async ({ ctx }) => {
     return db.workflow.create({
       data: {
-        name: "TODO: New Workflow",
+        name: Array.from({ length: 3 }, () => ["bright","silent","future","code","dream","fast","curious","cloud","logic","signal"][Math.floor(Math.random()*10)]).join(" "),
         userId: ctx.auth.user.id,
       },
     });
