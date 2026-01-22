@@ -40,7 +40,9 @@ export const useCreateWorkflow = () => {
         queryClient.invalidateQueries(trpc.workflows.getAll.queryOptions({}));
       },
       onError: (error) => {
-        toast.error(`Failed to create workflow: ${getErrorMessage(error.message)}`);
+        toast.error(
+          `Failed to create workflow: ${getErrorMessage(error.message)}`,
+        );
       },
     }),
   );
@@ -58,7 +60,9 @@ export const useRemoveWorkflow = () => {
         queryClient.invalidateQueries(trpc.workflows.getAll.queryOptions({}));
       },
       onError: (error) => {
-        toast.error(`Failed to delete workflow: ${getErrorMessage(error.message)}`);
+        toast.error(
+          `Failed to delete workflow: ${getErrorMessage(error.message)}`,
+        );
       },
     }),
   );
@@ -79,10 +83,37 @@ export const useUpdateWorkflowName = () => {
     trpc.workflows.updateName.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Workflow renamed successfully`);
-        queryClient.invalidateQueries(trpc.workflows.getOne.queryOptions({ id: data.id }));
+        queryClient.invalidateQueries(
+          trpc.workflows.getOne.queryOptions({ id: data.id }),
+        );
       },
       onError: (error) => {
-        toast.error(`Failed to rename workflow: ${getErrorMessage(error.message)}`);
+        toast.error(
+          `Failed to rename workflow: ${getErrorMessage(error.message)}`,
+        );
+      },
+    }),
+  );
+};
+
+// Hook to update workflow structure
+export const useUpdateWorkflow = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.workflows.update.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Workflow saved successfully`);
+        queryClient.invalidateQueries(trpc.workflows.getAll.queryOptions({}));
+        queryClient.invalidateQueries(
+          trpc.workflows.getOne.queryOptions({ id: data.id }),
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to save workflow: ${getErrorMessage(error.message)}`,
+        );
       },
     }),
   );

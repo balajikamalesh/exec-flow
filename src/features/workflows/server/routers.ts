@@ -51,6 +51,81 @@ export const workflowsRouter = createTRPCRouter({
         },
       });
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        nodes: z.array(
+          z.object({
+            id: z.string(),
+            type: z.string().nullish(),
+            position: z.object({
+              x: z.number(),
+              y: z.number(),
+            }),
+            data: z.record(z.string(), z.any()).optional(),
+          }),
+        ),
+        edges: z.array(
+          z.object({
+            id: z.string(),
+            source: z.string(),
+            target: z.string(),
+            sourceHandle: z.string().nullish(),
+            targetHandle: z.string().nullish(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, nodes, edges } = input;
+
+      const workflow = await db.workflow.findFirstOrThrow({
+        where: {
+          id,
+          userId: ctx.auth.user.id,
+        },
+      });
+      return await db.$transaction(async (tx) => {
+        // delete existing nodes and connections
+        await tx.node.deleteMany({
+          where: {
+            workflowId: workflow.id,
+          },
+        });
+
+        await tx.node.createMany({
+          data: nodes.map((node) => ({
+            id: node.id,
+            name: node.type || "unknown",
+            type: node.type as NodeType,
+            position: node.position,
+            workflowId: workflow.id,
+            data: node.data || {},
+          })),
+        });
+
+        // create new connections
+        await tx.connection.createMany({
+          data: edges.map((edge) => ({
+            id: edge.id,
+            fromNodeId: edge.source,
+            toNodeId: edge.target,
+            fromOutput: edge.sourceHandle || "main",
+            toInput: edge.targetHandle || "main",
+            workflowId: workflow.id,
+          })),
+        });
+
+        // update workflow's updatedAt timestamp
+        await tx.workflow.update({
+          where: { id: workflow.id },
+          data: { updatedAt: new Date() },
+        });
+
+        return workflow;
+      });
+    }),
   updateName: protectedProcedure
     .input(
       z.object({
