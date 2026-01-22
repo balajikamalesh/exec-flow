@@ -62,9 +62,9 @@ export const HttpRequestDialog = ({
   const form = useForm<z.infer<typeof HttpRequestDialogSchema>>({
     resolver: zodResolver(HttpRequestDialogSchema),
     defaultValues: {
-      endpoint: defaultEndpoint,
-      method: defaultMethod,
-      body: defaultBody,
+      endpoint: defaultEndpoint ?? "",
+      method: defaultMethod ?? "GET",
+      body: defaultBody ?? "",
     },
   });
 
@@ -77,11 +77,11 @@ export const HttpRequestDialog = ({
   };
 
   useEffect(() => {
-    if(open) {
+    if (open) {
       form.reset({
-        endpoint: defaultEndpoint,
-        method: defaultMethod,
-        body: defaultBody,
+        endpoint: defaultEndpoint ?? "",
+        method: defaultMethod ?? "GET",
+        body: defaultBody ?? "",
       });
     }
   }, [open, defaultEndpoint, defaultMethod, defaultBody, form]);
@@ -171,9 +171,7 @@ export const HttpRequestDialog = ({
               />
             )}
             <DialogFooter>
-              <Button type="submit">
-                 Save settings
-              </Button>
+              <Button type="submit">Save settings</Button>
             </DialogFooter>
           </form>
         </Form>

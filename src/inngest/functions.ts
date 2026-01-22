@@ -1,64 +1,42 @@
 import db from "@/lib/db";
 import { inngest } from "./client";
-import { generateText } from "ai";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { createOpenAI } from "@ai-sdk/openai";
-import { createAnthropic } from "@ai-sdk/anthropic";
+import { NonRetriableError } from "inngest";
+import { topologicalSort } from "./utils";
+import { NodeType } from "@/generated/prisma/enums";
+import { getExecutor } from "@/features/executions/libs/executor-registry";
 
-const google = createGoogleGenerativeAI();
-const openai = createOpenAI();
-const anthropic = createAnthropic();
-
-export const execute = inngest.createFunction(
-  { id: "execute-ai" },
-  { event: "execute/ai" },
+export const executeWorkFlow = inngest.createFunction(
+  { id: "execute-workflow" },
+  { event: "workflows/execute.workflow" },
   async ({ event, step }) => {
-    const { steps: geminiSteps } = await step.ai.wrap(
-      "gemini-generate-text",
-      generateText,
-      {
-        model: google("gemini-2.0-flash"),
-        system: "You are a helpful assistant",
-        prompt: "Write a short poem about the sea.",
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
-        },
-      },
-    );
-    const { steps: openaiSteps } = await step.ai.wrap(
-      "openai-generate-text",
-      generateText,
-      {
-        model: openai("gpt-4o"),
-        system: "You are a helpful assistant",
-        prompt: "Write a short poem about the sea.",
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
-        },
-      },
-    );
-    const { steps: anthropicSteps } = await step.ai.wrap(
-      "anthropic-generate-text",
-      generateText,
-      {
-        model: anthropic("claude-2"),
-        system: "You are a helpful assistant",
-        prompt: "Write a short poem about the sea.",
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
-        },
-      },
-    );
-    return {
-      geminiSteps,
-      // openaiSteps,
-      anthropicSteps,
-    };
+    const workflowId = event.data.workflowId;
+
+    if (!workflowId) {
+      throw new NonRetriableError("workflowId is required");
+    }
+
+    const sortedNodes = await step.run("prepare-workflow", async () => {
+      const workflow = await db.workflow.findFirstOrThrow({
+        where: { id: workflowId },
+        include: { nodes: true, connections: true },
+      });
+      return topologicalSort(workflow.nodes, workflow.connections);
+    });
+
+    // Initialize context with any initial data provided in the event
+    let context = event.data.initialData || {};
+
+    // Execute each node in order
+    for (const node of sortedNodes) {
+      const executor = getExecutor(node.type as NodeType);
+      context = await executor({
+        data: node.data as Record<string, unknown>,
+        nodeId: node.id,
+        context,
+        step,
+      });
+    }
+
+    return { workflowId, context };
   },
 );

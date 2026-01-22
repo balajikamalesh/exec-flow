@@ -9,38 +9,58 @@ import {
 } from "@/trpc/init";
 import { PAGINATION } from "@/config/constants";
 import { NodeType } from "@/generated/prisma/enums";
+import { inngest } from "@/inngest/client";
 
 export const workflowsRouter = createTRPCRouter({
-  create: premiumProcedure.mutation(async ({ ctx }) => {
-    return db.workflow.create({
-      data: {
-        name: Array.from(
-          { length: 3 },
-          () =>
-            [
-              "bright",
-              "silent",
-              "future",
-              "code",
-              "dream",
-              "fast",
-              "curious",
-              "cloud",
-              "logic",
-              "signal",
-            ][Math.floor(Math.random() * 10)],
-        ).join(" "),
-        userId: ctx.auth.user.id,
-        nodes: {
-          create: {
-            type: NodeType.INITIAL,
-            position: { x: 0, y: 0 },
-            name: NodeType.INITIAL,
+  execute: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const workflow = await db.workflow.findFirstOrThrow({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+      });
+
+      await inngest.send({
+        name: "workflows/execute.workflow",
+        data: {
+          workflowId: input.id,
+        }
+      })
+
+      return workflow;
+    }),
+    create: premiumProcedure.mutation(async ({ ctx }) => {
+      return db.workflow.create({
+        data: {
+          name: Array.from(
+            { length: 3 },
+            () =>
+              [
+                "bright",
+                "silent",
+                "future",
+                "code",
+                "dream",
+                "fast",
+                "curious",
+                "cloud",
+                "logic",
+                "signal",
+              ][Math.floor(Math.random() * 10)],
+          ).join(" "),
+          userId: ctx.auth.user.id,
+          nodes: {
+            create: {
+              type: NodeType.INITIAL,
+              position: { x: 0, y: 0 },
+              name: NodeType.INITIAL,
+            },
           },
         },
-      },
-    });
-  }),
+      });
+    }),
   remove: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
