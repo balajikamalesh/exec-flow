@@ -3,6 +3,7 @@ import { NonRetriableError } from "inngest";
 import ky, { type Options as KyOptions } from "ky";
 
 type HttpRequestData = {
+  variableName?: string;
   url?: string;
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: string;
@@ -15,7 +16,8 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
   data,
 }) => {
   debugger;
-  if (!data?.url || !data?.method) {
+  if (!data?.url || !data?.method || !data?.variableName) {
+    // TODO: publish error state for HTTP request
     throw new NonRetriableError(
       "HTTP Request node is missing required configuration.",
     );
@@ -36,21 +38,29 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
 
     if (body && ["POST", "PUT", "PATCH"].includes(method) && data.body) {
       options.body = body;
+      options.headers = {
+        ...options.headers,
+        "Content-Type": "application/json",
+      };
     }
 
     const response = await ky(url, options);
     const contentType = response.headers.get("content-type")
     const responseBody = contentType?.includes("application/json") ? 
             await response.json() : await response.text();
-            
-    return {
-      ...context,
+
+    const responsePayload = {
       httpResponse: {
         status: response.status,
         statusText: response.statusText,
         headers: Object.fromEntries(response.headers.entries()),
         data: responseBody,
       },
+    }
+            
+    return {
+      ...context,
+      [data.variableName!]: responsePayload, // Store chained response under their variable name
     };
   });
 
