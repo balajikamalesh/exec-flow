@@ -1,10 +1,9 @@
 "use client";
 
 import { toast } from "sonner";
-import { useCallback } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { createId } from "@paralleldrive/cuid2";
-import type { ComponentType, ReactNode } from "react";
+import { useCallback, type ComponentType, type ReactNode } from "react";
 import { GlobeIcon, MousePointerIcon } from "lucide-react";
 
 import {
