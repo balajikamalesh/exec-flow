@@ -15,7 +15,6 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
   step,
   data,
 }) => {
-  debugger;
   if (!data?.url || !data?.method || !data?.variableName) {
     // TODO: publish error state for HTTP request
     throw new NonRetriableError(
