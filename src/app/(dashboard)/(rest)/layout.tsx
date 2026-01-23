@@ -1,7 +1,8 @@
+import React from "react";
+
 import AppHeader from "@/components/app-header";
 import AppSidebar from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import React from "react";
 
 type Props = {
   children: React.ReactNode;

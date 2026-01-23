@@ -1,7 +1,8 @@
-import { NodeProps } from "@xyflow/react";
 import { memo, useState } from "react";
-import { BaseTriggerNode } from "../base-trigger-node";
+import { NodeProps } from "@xyflow/react";
 import { MousePointerIcon } from "lucide-react";
+
+import { BaseTriggerNode } from "../base-trigger-node";
 import { ManualTriggerDialog } from "./dialog";
 
 export const ManualTriggerNode = memo((props: NodeProps) => {

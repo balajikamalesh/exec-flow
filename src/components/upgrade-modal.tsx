@@ -1,6 +1,5 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +10,8 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+
+import { authClient } from "@/lib/auth-client";
 
 interface UpgradeModalProps {
   open: boolean;

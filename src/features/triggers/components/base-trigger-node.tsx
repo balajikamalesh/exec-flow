@@ -1,9 +1,10 @@
 "use client";
 
+import { memo, type ReactNode } from "react";
 import { type NodeProps, Position, useReactFlow } from "@xyflow/react";
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
-import { memo, type ReactNode } from "react";
+
 import { WorkflowNode } from "@/components/workflow-node";
 import { BaseHandle } from "@/components/react-flow/base-handle";
 import { BaseNode, BaseNodeContent } from "@/components/react-flow/base-node";

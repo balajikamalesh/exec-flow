@@ -1,9 +1,11 @@
 "use client";
 
+import { useCallback } from "react";
 import { createId } from "@paralleldrive/cuid2";
 import { Position, useReactFlow } from "@xyflow/react";
 import { GlobeIcon, MousePointerIcon } from "lucide-react";
 import { toast } from "sonner";
+
 import {
   Sheet,
   SheetContent,
@@ -14,7 +16,6 @@ import {
 } from "./ui/sheet";
 import { NodeType } from "@/generated/prisma/enums";
 import { Separator } from "./ui/separator";
-import { useCallback } from "react";
 
 export type NodeTypeOption = {
   type: NodeType;
