@@ -1,5 +1,6 @@
-import { requireAuth } from "@/lib/auth-utils";
 import React from "react";
+
+import { requireAuth } from "@/lib/auth-utils";
 
 interface PageProps {
   params: Promise<{

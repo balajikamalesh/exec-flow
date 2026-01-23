@@ -1,9 +1,11 @@
 "use client";
 
-import { createId } from "@paralleldrive/cuid2";
-import { Position, useReactFlow } from "@xyflow/react";
-import { GlobeIcon, MousePointerIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useReactFlow } from "@xyflow/react";
+import { createId } from "@paralleldrive/cuid2";
+import { useCallback, type ComponentType, type ReactNode } from "react";
+import { GlobeIcon, MousePointerIcon } from "lucide-react";
+
 import {
   Sheet,
   SheetContent,
@@ -14,13 +16,12 @@ import {
 } from "./ui/sheet";
 import { NodeType } from "@/generated/prisma/enums";
 import { Separator } from "./ui/separator";
-import { useCallback } from "react";
 
 export type NodeTypeOption = {
   type: NodeType;
   label: string;
   description: string;
-  icon: React.ComponentType<{ className?: string }> | string;
+  icon: ComponentType<{ className?: string }> | string;
 };
 
 const triggerNodes: NodeTypeOption[] = [
@@ -46,7 +47,7 @@ const executionNodes: NodeTypeOption[] = [
 interface NodeSelectorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function NodeSelector({

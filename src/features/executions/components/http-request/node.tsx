@@ -1,8 +1,9 @@
 "use client";
 
+import { memo, useState } from "react";
 import { type NodeProps, type Node, useReactFlow } from "@xyflow/react";
 import { GlobeIcon } from "lucide-react";
-import { memo, useState } from "react";
+
 import { BaseExecutionNode } from "../base-execution-node";
 import { HttpRequestDialog, HttpRequestFormType } from "./dialog";
 

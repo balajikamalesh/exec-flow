@@ -1,6 +1,7 @@
 // this file contains shared components used across multiple entity pages
 // e.g., Workflows, Projects, etc.
 
+import React from "react";
 import Link from "next/link";
 import {
   AlertTriangleIcon,
@@ -29,7 +30,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import React from "react";
 
 type EntityHeaderProps = {
   title: string;

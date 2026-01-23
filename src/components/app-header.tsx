@@ -1,4 +1,5 @@
 import React from "react";
+
 import { SidebarTrigger } from "./ui/sidebar";
 
 type Props = {};

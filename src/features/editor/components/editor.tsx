@@ -17,12 +17,12 @@ import {
   Panel,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { useSetAtom } from "jotai";
 
 import { useSuspenseWorkflow } from "@/features/workflows/hooks/use-workflows";
 import { ErrorView, LoadingView } from "@/components/entity-components";
 import { nodeComponents } from "@/config/node-components";
 import { AddNodeButton } from "./add-node-button";
-import { useSetAtom } from "jotai";
 import { editorAtom } from "../store/atoms";
 import { NodeType } from "@/generated/prisma/enums";
 import { ExecuteWorkflowButton } from "./execute-workflow-button";
