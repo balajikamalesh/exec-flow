@@ -107,7 +107,7 @@ export const HttpRequestDialog = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(hanleSubmit)}
-            className="space-y-8 mt-4"
+            className="space-y-6 mt-4"
           >
             <FormField
               control={form.control}
