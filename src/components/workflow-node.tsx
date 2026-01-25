@@ -6,7 +6,7 @@ import { SettingsIcon, TrashIcon } from "lucide-react";
 
 import { Button } from "./ui/button";
 
-// UI wrapper that adds common functionality (settings, delete actions, labels) 
+// UI wrapper that adds common functionality (settings, delete actions, labels)
 // around workflow nodes in your visual workflow editor
 interface WorkflowNodeProps {
   children: ReactNode;
@@ -29,10 +29,18 @@ export const WorkflowNode = ({
     <>
       {showToolbar && (
         <NodeToolbar>
-          <Button size="sm" variant="ghost" onClick={() => onSettings && onSettings()}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => onSettings && onSettings()}
+          >
             <SettingsIcon className="size-4" />
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => onDelete && onDelete()}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => onDelete && onDelete()}
+          >
             <TrashIcon className="size-4" />
           </Button>
         </NodeToolbar>
