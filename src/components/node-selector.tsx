@@ -31,6 +31,12 @@ const triggerNodes: NodeTypeOption[] = [
     description: "Runs the workflow on click of a button",
     icon: MousePointerIcon,
   },
+  {
+    type: NodeType.GOOGLE_FORM_TRIGGER,
+    label: "Google Form Trigger",
+    description: "Triggers the workflow when a Google Form is submitted",
+    icon: "/logo/googleform.svg",
+  },
 ];
 
 const executionNodes: NodeTypeOption[] = [
@@ -42,7 +48,7 @@ const executionNodes: NodeTypeOption[] = [
   },
 ];
 
-// A component that displays a side sheet (drawer) for adding new nodes to a 
+// A component that displays a side sheet (drawer) for adding new nodes to a
 // React Flow-based workflow editor
 interface NodeSelectorProps {
   open: boolean;

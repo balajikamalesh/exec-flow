@@ -38,7 +38,7 @@ const HttpRequestDialogSchema = z.object({
     .string()
     .min(1, { message: "Variable name is required" })
     .regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, { message: "Invalid variable name" }),
-  endpoint: z.url({ message: "Invalid URL" }),
+  endpoint: z.string().min(1, { message: "Invalid URL" }),
   method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
   body: z.string().optional(),
   // .refine TODO JSON5
@@ -63,7 +63,7 @@ export const HttpRequestDialog = ({
   defaultEndpoint,
   defaultMethod,
   defaultBody,
-  defaultVariableName
+  defaultVariableName,
 }: HttpRequestDialogProps) => {
   const form = useForm<z.infer<typeof HttpRequestDialogSchema>>({
     resolver: zodResolver(HttpRequestDialogSchema),
@@ -115,12 +115,9 @@ export const HttpRequestDialog = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Variable Name</FormLabel>
-                  <Input
-                    {...field}
-                    placeholder="myApiCall"
-                  />
+                  <Input {...field} placeholder="myApiCall" />
                   <FormDescription>
-                    Use this name to reference the result in other nodes: {" "}
+                    Use this name to reference the result in other nodes:{" "}
                     {`{{${watchVariableName}.httpResponse.data}}`}
                   </FormDescription>
                   <FormMessage />
