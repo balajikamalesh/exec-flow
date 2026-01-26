@@ -11,9 +11,9 @@ Handlebars.registerHelper("json", (context) => {
 });
 
 type HttpRequestData = {
-  variableName: string;
-  url: string;
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  variableName?: string;
+  url?: string;
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: string;
 };
 
@@ -31,19 +31,18 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
     }),
   );
 
-  if (!data.url || !data.method || !data.variableName) {
-    await publish(
-      httpRequestChannel().status({
-        nodeId,
-        status: "error",
-      }),
-    );
-    throw new NonRetriableError(
-      "HTTP Request node is missing required configuration.",
-    );
-  }
-
   try {
+    if (!data.url || !data.method || !data.variableName) {
+      await publish(
+        httpRequestChannel().status({
+          nodeId,
+          status: "error",
+        }),
+      );
+      throw new NonRetriableError(
+        "HTTP Request node is missing required configuration.",
+      );
+    }
     const result = await step.run("http_request", async () => {
       const method = data.method;
       const url = Handlebars.compile(data.url)(context);
@@ -57,7 +56,7 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
         },
       };
 
-      if (body && ["POST", "PUT", "PATCH"].includes(method)) {
+      if (body && ["POST", "PUT", "PATCH"].includes(method!)) {
         const resolved = Handlebars.compile(body)(context);
         JSON.parse(resolved); // Validate JSON
         options.body = resolved;
@@ -84,7 +83,7 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
 
       return {
         ...context,
-        [data.variableName]: responsePayload, // Store chained response under their variable name
+        [data.variableName!]: responsePayload, // Store chained response under their variable name
       };
     });
 
