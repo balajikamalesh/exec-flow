@@ -52,6 +52,24 @@ const executionNodes: NodeTypeOption[] = [
     description: "Makes an HTTP request to a specified URL",
     icon: GlobeIcon,
   },
+  {
+    type: NodeType.GEMINI,
+    label: "Gemini",
+    description: "Executes a Gemini action",
+    icon: "/logo/gemini.svg",
+  },
+  {
+    type: NodeType.ANTHROPIC,
+    label: "Anthropic",
+    description: "Executes an Anthropic action",
+    icon: "/logo/anthropic.svg",
+  },
+  {
+    type: NodeType.OPENAI,
+    label: "OpenAI",
+    description: "Executes an OpenAI action",
+    icon: "/logo/openai.svg",
+  },
 ];
 
 // A component that displays a side sheet (drawer) for adding new nodes to a

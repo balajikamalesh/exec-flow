@@ -1,6 +1,7 @@
 import db from "@/lib/db";
-import { inngest } from "./client";
 import { NonRetriableError } from "inngest";
+
+import { inngest } from "./client";
 import { topologicalSort } from "./utils";
 import { NodeType } from "@/generated/prisma/enums";
 import { getExecutor } from "@/features/executions/libs/executor-registry";
@@ -8,6 +9,9 @@ import { httpRequestChannel } from "./channels/http-request";
 import { manualTriggerChannel } from "./channels/manual-trigger";
 import { googleFormTriggerChannel } from "./channels/google-form-trigger";
 import { stripeTriggerChannel } from "./channels/stripe-trigger";
+import { geminiChannel } from "./channels/gemini";
+import { anthropicChannel } from "./channels/anthropic";
+import { openaiChannel } from "./channels/openai";
 
 export const executeWorkFlow = inngest.createFunction(
   { id: "execute-workflow", retries: 0 },
@@ -15,6 +19,9 @@ export const executeWorkFlow = inngest.createFunction(
     event: "workflows/execute.workflow",
     channels: [
       httpRequestChannel(),
+      geminiChannel(),
+      anthropicChannel(),
+      openaiChannel(),
       manualTriggerChannel(),
       googleFormTriggerChannel(),
       stripeTriggerChannel(),
