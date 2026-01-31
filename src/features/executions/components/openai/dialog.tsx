@@ -32,12 +32,16 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useCredentialsByType } from "@/features/credentials/hooks/use-credentials";
+import { CredentialType } from "@/generated/prisma/enums";
+import Image from "next/image";
 
 const AVAILABLE_MODELS = [
-  "gemini-1.5-flash",
-  "gemini-1.5-pro",
-  "gemini-2.0-flash",
-  "gemini-2.0-pro",
+  "gpt-5.2-2025-12-11",
+  "gpt-5-nano",
+  "gpt-5-mini",
+  "o1-mini",
+  "o1-pro",
 ];
 
 const OpenAIDialogSchema = z.object({
@@ -45,6 +49,7 @@ const OpenAIDialogSchema = z.object({
     .string()
     .min(1, { message: "Variable name is required" })
     .regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, { message: "Invalid variable name" }),
+  credentialId: z.string().min(1, "Credential is required"),
   model: z.enum(AVAILABLE_MODELS),
   systemPrompt: z.string().optional(),
   userPrompt: z.string().min(1, { message: "User prompt is required" }),
@@ -56,6 +61,7 @@ type OpenAIDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: z.infer<typeof OpenAIDialogSchema>) => void;
+  defaultCredentialId?: string;
   defaultModel?: string;
   defaultVariableName?: string;
   systemPrompt?: string;
@@ -66,16 +72,22 @@ export const OpenAIDialog = ({
   open,
   onOpenChange,
   onSubmit,
+  defaultCredentialId,
   defaultModel,
   defaultVariableName,
   systemPrompt,
   userPrompt,
 }: OpenAIDialogProps) => {
+  const { data: openAICredentials, isLoading } = useCredentialsByType(
+    CredentialType.OPENAI,
+  );
+
   const form = useForm<z.infer<typeof OpenAIDialogSchema>>({
     resolver: zodResolver(OpenAIDialogSchema),
     defaultValues: {
+      credentialId: defaultCredentialId ?? "",
       variableName: defaultVariableName ?? "",
-      model: defaultModel ?? "gemini-2.0-flash",
+      model: defaultModel ?? "gpt-5-nano",
       userPrompt: userPrompt ?? "",
       systemPrompt: systemPrompt ?? "",
     },
@@ -83,7 +95,7 @@ export const OpenAIDialog = ({
 
   const watchVariableName = form.watch("variableName") || "openAI";
 
-  const hanleSubmit = (values: z.infer<typeof OpenAIDialogSchema>) => {
+  const handleSubmit = (values: z.infer<typeof OpenAIDialogSchema>) => {
     onSubmit(values);
     onOpenChange(false);
   };
@@ -91,8 +103,9 @@ export const OpenAIDialog = ({
   useEffect(() => {
     if (open) {
       form.reset({
+        credentialId: defaultCredentialId ?? "",
         variableName: defaultVariableName ?? "",
-        model: defaultModel ?? "gemini-2.0-flash",
+        model: defaultModel ?? "gpt-5-nano",
         userPrompt: userPrompt ?? "",
         systemPrompt: systemPrompt ?? "",
       });
@@ -110,8 +123,8 @@ export const OpenAIDialog = ({
         </DialogHeader>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(hanleSubmit)}
-            className="space-y-6 mt-4"
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4 mt-4"
           >
             <FormField
               control={form.control}
@@ -148,6 +161,42 @@ export const OpenAIDialog = ({
                       ))}
                     </SelectContent>
                   </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="credentialId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>OpenAI Credential</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isLoading || openAICredentials?.length === 0}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a credential" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {openAICredentials?.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            <div className="flex items-center gap-2">
+                              <Image
+                                src="/logo/openai.svg"
+                                alt="OpenAI Logo"
+                                width={16}
+                                height={16}
+                              />
+                              <span>{option.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

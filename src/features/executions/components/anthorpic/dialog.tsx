@@ -32,12 +32,14 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useCredentialsByType } from "@/features/credentials/hooks/use-credentials";
+import { CredentialType } from "@/generated/prisma/enums";
+import Image from "next/image";
 
 const AVAILABLE_MODELS = [
-  "gemini-1.5-flash",
-  "gemini-1.5-pro",
-  "gemini-2.0-flash",
-  "gemini-2.0-pro",
+  "claude-sonnet-4-5",
+  "claude-haiku-4-5",
+  "claude-opus-4-5",
 ];
 
 const AnthropicDialogSchema = z.object({
@@ -45,6 +47,7 @@ const AnthropicDialogSchema = z.object({
     .string()
     .min(1, { message: "Variable name is required" })
     .regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, { message: "Invalid variable name" }),
+  credentialId: z.string().min(1, "Credential is required"),
   model: z.enum(AVAILABLE_MODELS),
   systemPrompt: z.string().optional(),
   userPrompt: z.string().min(1, { message: "User prompt is required" }),
@@ -56,6 +59,7 @@ type AnthropicDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: z.infer<typeof AnthropicDialogSchema>) => void;
+  defaultCredentialId?: string;
   defaultModel?: string;
   defaultVariableName?: string;
   systemPrompt?: string;
@@ -67,13 +71,19 @@ export const AnthropicDialog = ({
   onOpenChange,
   onSubmit,
   defaultModel,
+  defaultCredentialId,
   defaultVariableName,
   systemPrompt,
   userPrompt,
 }: AnthropicDialogProps) => {
+  const { data: anthropicCredentials, isLoading } = useCredentialsByType(
+    CredentialType.ANTHROPIC,
+  );
+
   const form = useForm<z.infer<typeof AnthropicDialogSchema>>({
     resolver: zodResolver(AnthropicDialogSchema),
     defaultValues: {
+      credentialId: defaultCredentialId ?? "",
       variableName: defaultVariableName ?? "",
       model: defaultModel ?? "anthropic-2.0-flash",
       userPrompt: userPrompt ?? "",
@@ -83,7 +93,7 @@ export const AnthropicDialog = ({
 
   const watchVariableName = form.watch("variableName") || "anthropic";
 
-  const hanleSubmit = (values: z.infer<typeof AnthropicDialogSchema>) => {
+  const handleSubmit = (values: z.infer<typeof AnthropicDialogSchema>) => {
     onSubmit(values);
     onOpenChange(false);
   };
@@ -110,8 +120,8 @@ export const AnthropicDialog = ({
         </DialogHeader>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(hanleSubmit)}
-            className="space-y-6 mt-4"
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4 mt-4"
           >
             <FormField
               control={form.control}
@@ -148,6 +158,42 @@ export const AnthropicDialog = ({
                       ))}
                     </SelectContent>
                   </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="credentialId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gemini Credential</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isLoading || anthropicCredentials?.length === 0}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a credential" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {anthropicCredentials?.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            <div className="flex items-center gap-2">
+                              <Image
+                                src="/logo/anthropic.svg"
+                                alt="Anthropic Logo"
+                                width={16}
+                                height={16}
+                              />
+                              <span>{option.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

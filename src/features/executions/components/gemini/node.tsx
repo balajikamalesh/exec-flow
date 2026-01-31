@@ -11,6 +11,7 @@ import { geminiChannel } from "@/inngest/channels/gemini";
 
 type GeminiNodeData = {
   model?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
   variableName?: string;
@@ -46,6 +47,7 @@ export const GeminiNode = memo((props: NodeProps<GeminiNodeType>) => {
             data: {
               ...node.data,
               variableName: values.variableName,
+              credentialId: values.credentialId,
               model: values.model,
               systemPrompt: values.systemPrompt,
               userPrompt: values.userPrompt,
@@ -64,6 +66,7 @@ export const GeminiNode = memo((props: NodeProps<GeminiNodeType>) => {
         open={open}
         onOpenChange={setOpen}
         onSubmit={handleSubmit}
+        defaultCredentialId={nodedata?.credentialId}
         defaultModel={nodedata?.model}
         defaultVariableName={nodedata?.variableName}
         systemPrompt={nodedata?.systemPrompt}

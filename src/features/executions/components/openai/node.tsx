@@ -11,6 +11,7 @@ import { openaiChannel } from "@/inngest/channels/openai";
 
 type OpenAINodeData = {
   model?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
   variableName?: string;
@@ -29,7 +30,7 @@ export const OpenAINode = memo((props: NodeProps<OpenAINodeType>) => {
     refreshToken: fetchOpenAIRealtimeToken,
   });
   const description = nodedata?.userPrompt
-    ? `${nodedata.model ?? "gemini-2.0-flash"}: ${nodedata.userPrompt.slice(0, 30)}...`
+    ? `${nodedata.model ?? "gpt-5-nano"}: ${nodedata.userPrompt.slice(0, 30)}...`
     : "No prompt set";
   const { setNodes } = useReactFlow();
 
@@ -45,6 +46,7 @@ export const OpenAINode = memo((props: NodeProps<OpenAINodeType>) => {
             ...node,
             data: {
               ...node.data,
+              credentialId: values.credentialId,
               variableName: values.variableName,
               model: values.model,
               systemPrompt: values.systemPrompt,
@@ -64,6 +66,7 @@ export const OpenAINode = memo((props: NodeProps<OpenAINodeType>) => {
         open={open}
         onOpenChange={setOpen}
         onSubmit={handleSubmit}
+        defaultCredentialId={nodedata?.credentialId}
         defaultModel={nodedata?.model}
         defaultVariableName={nodedata?.variableName}
         systemPrompt={nodedata?.systemPrompt}

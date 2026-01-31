@@ -5,6 +5,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
 import type { NodeExecutor } from "@/features/executions/types";
 import { geminiChannel } from "@/inngest/channels/gemini";
+import db from "@/lib/db";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -14,6 +15,7 @@ Handlebars.registerHelper("json", (context) => {
 
 type GeminiData = {
   variableName?: string;
+  credentialId?: string;
   model?: string;
   systemPrompt?: string;
   userPrompt?: string;
@@ -43,6 +45,16 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     throw new NonRetriableError("Variable name is required.");
   }
 
+  if (!data.credentialId) {
+    await publish(
+      geminiChannel().status({
+        nodeId,
+        status: "error",
+      }),
+    );
+    throw new NonRetriableError("Credential is required.");
+  }
+
   if (!data.userPrompt) {
     await publish(
       geminiChannel().status({
@@ -59,10 +71,24 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
 
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
-  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  const credential = await step.run("get-credential", async () => {
+    return db.credential.findUnique({
+      where: { id: data.credentialId },
+    });
+  });
+
+  if (!credential) {
+    await publish(
+      geminiChannel().status({
+        nodeId,
+        status: "error",
+      }),
+    );
+    throw new NonRetriableError("Credential not found.");
+  }
 
   const google = createGoogleGenerativeAI({
-    apiKey,
+    apiKey: credential.value,
   });
 
   try {
