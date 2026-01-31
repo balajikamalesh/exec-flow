@@ -11,6 +11,7 @@ import { anthropicChannel } from "@/inngest/channels/anthropic";
 
 type AnthropicNodeData = {
   model?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
   variableName?: string;
@@ -45,6 +46,7 @@ export const AnthropicNode = memo((props: NodeProps<AnthropicNodeType>) => {
             ...node,
             data: {
               ...node.data,
+              credentialId: values.credentialId,
               variableName: values.variableName,
               model: values.model,
               systemPrompt: values.systemPrompt,
@@ -65,6 +67,7 @@ export const AnthropicNode = memo((props: NodeProps<AnthropicNodeType>) => {
         onOpenChange={setOpen}
         onSubmit={handleSubmit}
         defaultModel={nodedata?.model}
+        defaultCredentialId={nodedata?.credentialId}
         defaultVariableName={nodedata?.variableName}
         systemPrompt={nodedata?.systemPrompt}
         userPrompt={nodedata?.userPrompt!}

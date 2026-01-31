@@ -32,6 +32,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useCredentialsByType } from "@/features/credentials/hooks/use-credentials";
+import { CredentialType } from "@/generated/prisma/enums";
+import Image from "next/image";
 
 const AVAILABLE_MODELS = [
   "gemini-1.5-flash",
@@ -45,6 +48,7 @@ const GeminiDialogSchema = z.object({
     .string()
     .min(1, { message: "Variable name is required" })
     .regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, { message: "Invalid variable name" }),
+  credentialId: z.string().min(1, "Credential is required"),
   model: z.enum(AVAILABLE_MODELS),
   systemPrompt: z.string().optional(),
   userPrompt: z.string().min(1, { message: "User prompt is required" }),
@@ -56,6 +60,7 @@ type GeminiDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: z.infer<typeof GeminiDialogSchema>) => void;
+  defaultCredentialId?: string;
   defaultModel?: string;
   defaultVariableName?: string;
   systemPrompt?: string;
@@ -66,14 +71,20 @@ export const GeminiDialog = ({
   open,
   onOpenChange,
   onSubmit,
+  defaultCredentialId,
   defaultModel,
   defaultVariableName,
   systemPrompt,
   userPrompt,
 }: GeminiDialogProps) => {
+  const { data: geminiCredentials, isLoading } = useCredentialsByType(
+    CredentialType.GEMINI,
+  );
+
   const form = useForm<z.infer<typeof GeminiDialogSchema>>({
     resolver: zodResolver(GeminiDialogSchema),
     defaultValues: {
+      credentialId: defaultCredentialId ?? "",
       variableName: defaultVariableName ?? "",
       model: defaultModel ?? "gemini-2.0-flash",
       userPrompt: userPrompt ?? "",
@@ -83,7 +94,7 @@ export const GeminiDialog = ({
 
   const watchVariableName = form.watch("variableName") || "gemini";
 
-  const hanleSubmit = (values: z.infer<typeof GeminiDialogSchema>) => {
+  const handleSubmit = (values: z.infer<typeof GeminiDialogSchema>) => {
     onSubmit(values);
     onOpenChange(false);
   };
@@ -91,6 +102,7 @@ export const GeminiDialog = ({
   useEffect(() => {
     if (open) {
       form.reset({
+        credentialId: defaultCredentialId ?? "",
         variableName: defaultVariableName ?? "",
         model: defaultModel ?? "gemini-2.0-flash",
         userPrompt: userPrompt ?? "",
@@ -110,8 +122,8 @@ export const GeminiDialog = ({
         </DialogHeader>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(hanleSubmit)}
-            className="space-y-6 mt-4"
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4 mt-4"
           >
             <FormField
               control={form.control}
@@ -148,6 +160,42 @@ export const GeminiDialog = ({
                       ))}
                     </SelectContent>
                   </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="credentialId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gemini Credential</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isLoading || geminiCredentials?.length === 0}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a credential" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {geminiCredentials?.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            <div className="flex items-center gap-2">
+                              <Image
+                                src="/logo/gemini.svg"
+                                alt="Gemini Logo"
+                                width={16}
+                                height={16}
+                              />
+                              <span>{option.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

@@ -3,6 +3,7 @@ import Handlebars from "handlebars";
 import { NonRetriableError } from "inngest";
 import { createOpenAI } from "@ai-sdk/openai";
 
+import db from "@/lib/db";
 import type { NodeExecutor } from "@/features/executions/types";
 import { openaiChannel } from "@/inngest/channels/openai";
 
@@ -14,6 +15,7 @@ Handlebars.registerHelper("json", (context) => {
 
 type OpenAIData = {
   variableName?: string;
+  credentialId?: string;
   model?: string;
   systemPrompt?: string;
   userPrompt?: string;
@@ -43,6 +45,16 @@ export const openaiExecutor: NodeExecutor<OpenAIData> = async ({
     throw new NonRetriableError("Variable name is required.");
   }
 
+  if (!data.credentialId) {
+    await publish(
+      openaiChannel().status({
+        nodeId,
+        status: "error",
+      }),
+    );
+    throw new NonRetriableError("Credential is required.");
+  }
+
   if (!data.userPrompt) {
     await publish(
       openaiChannel().status({
@@ -59,15 +71,31 @@ export const openaiExecutor: NodeExecutor<OpenAIData> = async ({
 
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
+  const credential = await step.run("get-credential", async () => {
+    return db.credential.findUnique({
+      where: { id: data.credentialId },
+    });
+  });
+
+  if (!credential) {
+    await publish(
+      openaiChannel().status({
+        nodeId,
+        status: "error",
+      }),
+    );
+    throw new NonRetriableError("Credential not found.");
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
 
   const openai = createOpenAI({
-    apiKey,
+    apiKey: credential.value,
   });
 
   try {
     const { steps } = await step.ai.wrap("openai-generate-text", generateText, {
-      model: openai(data.model || "gemini-2.0-flash"),
+      model: openai(data.model || "gpt-5-nano"),
       system: systemPrompt,
       prompt: userPrompt,
       experimental_telemetry: {

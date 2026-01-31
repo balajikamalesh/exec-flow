@@ -5,6 +5,7 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 
 import type { NodeExecutor } from "@/features/executions/types";
 import { anthropicChannel } from "@/inngest/channels/anthropic";
+import db from "@/lib/db";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -15,6 +16,7 @@ Handlebars.registerHelper("json", (context) => {
 type AnthropicData = {
   variableName?: string;
   model?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -43,6 +45,16 @@ export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
     throw new NonRetriableError("Variable name is required.");
   }
 
+  if (!data.credentialId) {
+    await publish(
+      anthropicChannel().status({
+        nodeId,
+        status: "error",
+      }),
+    );
+    throw new NonRetriableError("Credential is required.");
+  }
+
   if (!data.userPrompt) {
     await publish(
       anthropicChannel().status({
@@ -59,10 +71,26 @@ export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
 
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
+  const credential = await step.run("get-credential", async () => {
+    return db.credential.findUnique({
+      where: { id: data.credentialId },
+    });
+  });
+
+  if (!credential) {
+    await publish(
+      anthropicChannel().status({
+        nodeId,
+        status: "error",
+      }),
+    );
+    throw new NonRetriableError("Credential not found.");
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
   const anthropic = createAnthropic({
-    apiKey,
+    apiKey: credential.value,
   });
 
   try {
