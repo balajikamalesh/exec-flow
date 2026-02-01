@@ -3,7 +3,7 @@ import { NonRetriableError } from "inngest";
 
 import { inngest } from "./client";
 import { topologicalSort } from "./utils";
-import { NodeType } from "@/generated/prisma/enums";
+import { ExecutionStatus, NodeType } from "@/generated/prisma/enums";
 import { getExecutor } from "@/features/executions/libs/executor-registry";
 import { httpRequestChannel } from "./channels/http-request";
 import { manualTriggerChannel } from "./channels/manual-trigger";
@@ -16,7 +16,23 @@ import { discordChannel } from "./channels/discord";
 import { slackChannel } from "./channels/slack";
 
 export const executeWorkFlow = inngest.createFunction(
-  { id: "execute-workflow", retries: 0 },
+  {
+    id: "execute-workflow",
+    retries: 0,
+    onFailure: async ({ event, step }) => {
+      return db.execution.update({
+        where: {
+          inngestEventId: event.data.event.id,
+        },
+        data: {
+          status: ExecutionStatus.FAILED,
+          completedAt: new Date(),
+          error: event.data.error.message,
+          errorStack: event.data.error.stack,
+        },
+      });
+    },
+  },
   {
     event: "workflows/execute.workflow",
     channels: [
@@ -32,11 +48,21 @@ export const executeWorkFlow = inngest.createFunction(
     ],
   },
   async ({ event, step, publish }) => {
+    const inngestEventId = event.id;
     const workflowId = event.data.workflowId;
 
-    if (!workflowId) {
-      throw new NonRetriableError("workflowId is required");
+    if (!inngestEventId || !workflowId) {
+      throw new NonRetriableError("EventId or workflowId is missing");
     }
+
+    await step.run("create-execution", async () => {
+      await db.execution.create({
+        data: {
+          inngestEventId,
+          workflowId,
+        },
+      });
+    });
 
     const sortedNodes = await step.run("prepare-workflow", async () => {
       const workflow = await db.workflow.findFirstOrThrow({
@@ -69,6 +95,17 @@ export const executeWorkFlow = inngest.createFunction(
         publish,
       });
     }
+
+    await step.run("finalize-execution", async () => {
+      await db.execution.update({
+        where: { inngestEventId, workflowId },
+        data: {
+          status: ExecutionStatus.SUCCESS,
+          completedAt: new Date(),
+          output: context,
+        },
+      });
+    });
 
     return { workflowId, context };
   },
