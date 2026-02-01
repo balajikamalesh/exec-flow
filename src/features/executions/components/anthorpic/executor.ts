@@ -25,6 +25,7 @@ export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
   nodeId,
   context,
   step,
+  userId,
   data,
   publish,
 }) => {
@@ -73,7 +74,10 @@ export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
 
   const credential = await step.run("get-credential", async () => {
     return db.credential.findUnique({
-      where: { id: data.credentialId },
+      where: {
+        id: data.credentialId,
+        userId,
+      },
     });
   });
 
@@ -86,8 +90,6 @@ export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
     );
     throw new NonRetriableError("Credential not found.");
   }
-
-  const apiKey = process.env.ANTHROPIC_API_KEY;
 
   const anthropic = createAnthropic({
     apiKey: credential.value,

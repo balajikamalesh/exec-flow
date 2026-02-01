@@ -70,6 +70,18 @@ const executionNodes: NodeTypeOption[] = [
     description: "Executes an OpenAI action",
     icon: "/logo/openai.svg",
   },
+  {
+    type: NodeType.DISCORD,
+    label: "Discord",
+    description: "Send a message to Discord",
+    icon: "/logo/discord.svg",
+  },
+  {
+    type: NodeType.SLACK,
+    label: "Slack",
+    description: "Send a message to Slack",
+    icon: "/logo/slack.svg",
+  },
 ];
 
 // A component that displays a side sheet (drawer) for adding new nodes to a

@@ -25,6 +25,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
   nodeId,
   context,
   step,
+  userId,
   data,
   publish,
 }) => {
@@ -73,7 +74,10 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
 
   const credential = await step.run("get-credential", async () => {
     return db.credential.findUnique({
-      where: { id: data.credentialId },
+      where: {
+        id: data.credentialId,
+        userId,
+      },
     });
   });
 

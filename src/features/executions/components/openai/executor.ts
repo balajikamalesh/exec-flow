@@ -25,6 +25,7 @@ export const openaiExecutor: NodeExecutor<OpenAIData> = async ({
   nodeId,
   context,
   step,
+  userId,
   data,
   publish,
 }) => {
@@ -73,7 +74,10 @@ export const openaiExecutor: NodeExecutor<OpenAIData> = async ({
 
   const credential = await step.run("get-credential", async () => {
     return db.credential.findUnique({
-      where: { id: data.credentialId },
+      where: {
+        id: data.credentialId,
+        userId,
+      },
     });
   });
 
@@ -86,8 +90,6 @@ export const openaiExecutor: NodeExecutor<OpenAIData> = async ({
     );
     throw new NonRetriableError("Credential not found.");
   }
-
-  const apiKey = process.env.OPENAI_API_KEY;
 
   const openai = createOpenAI({
     apiKey: credential.value,

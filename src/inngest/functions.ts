@@ -12,6 +12,8 @@ import { stripeTriggerChannel } from "./channels/stripe-trigger";
 import { geminiChannel } from "./channels/gemini";
 import { anthropicChannel } from "./channels/anthropic";
 import { openaiChannel } from "./channels/openai";
+import { discordChannel } from "./channels/discord";
+import { slackChannel } from "./channels/slack";
 
 export const executeWorkFlow = inngest.createFunction(
   { id: "execute-workflow", retries: 0 },
@@ -25,6 +27,8 @@ export const executeWorkFlow = inngest.createFunction(
       manualTriggerChannel(),
       googleFormTriggerChannel(),
       stripeTriggerChannel(),
+      discordChannel(),
+      slackChannel(),
     ],
   },
   async ({ event, step, publish }) => {
@@ -42,6 +46,14 @@ export const executeWorkFlow = inngest.createFunction(
       return topologicalSort(workflow.nodes, workflow.connections);
     });
 
+    const userId = await step.run("get-user-id", async () => {
+      const workflow = await db.workflow.findFirstOrThrow({
+        where: { id: workflowId },
+        select: { userId: true },
+      });
+      return workflow.userId;
+    });
+
     // Initialize context with any initial data provided in the event
     let context = event.data.initialData || {};
 
@@ -52,6 +64,7 @@ export const executeWorkFlow = inngest.createFunction(
         data: node.data as Record<string, unknown>,
         nodeId: node.id,
         context,
+        userId,
         step,
         publish,
       });

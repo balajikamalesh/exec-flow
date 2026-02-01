@@ -9,6 +9,8 @@ import { ManualTriggerNode } from "@/features/triggers/components/manual-trigger
 import { StripeTriggerNode } from "@/features/triggers/components/stripe-trigger/node";
 import { AnthropicNode } from "@/features/executions/components/anthorpic/node";
 import { OpenAINode } from "@/features/executions/components/openai/node";
+import { DiscordNode } from "@/features/executions/components/discord/node";
+import { SlackNode } from "@/features/executions/components/slack/node";
 
 export const nodeComponents = {
   [NodeType.INITIAL]: InitialNode,
@@ -19,6 +21,8 @@ export const nodeComponents = {
   [NodeType.GEMINI]: GeminiNode,
   [NodeType.ANTHROPIC]: AnthropicNode,
   [NodeType.OPENAI]: OpenAINode,
+  [NodeType.DISCORD]: DiscordNode,
+  [NodeType.SLACK]: SlackNode,
 } as const satisfies NodeTypes;
 
 export type RegisteredNodeType = keyof typeof nodeComponents;
