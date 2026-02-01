@@ -1,0 +1,155 @@
+"use client";
+
+import {
+  CheckCircle2Icon,
+  ClockIcon,
+  Loader2Icon,
+  XCircleIcon,
+} from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+
+import {
+  EmptyView,
+  EntityContainer,
+  EntityHeader,
+  EntityItem,
+  EntityList,
+  EntityPagination,
+  ErrorView,
+  LoadingView,
+} from "@/components/entity-components";
+import { useSuspenseExecutions } from "../hooks/use-executions";
+import { useExecutionsParams } from "../hooks/use-executions-params";
+import { ExecutionStatus, type Execution } from "@/generated/prisma/browser";
+
+const getStatusIcon = (status: ExecutionStatus) => {
+  switch (status) {
+    case ExecutionStatus.SUCCESS:
+      return <CheckCircle2Icon className="size-5 text-green-500" />;
+    case ExecutionStatus.FAILED:
+      return <XCircleIcon className="size-5 text-red-500" />;
+    case ExecutionStatus.RUNNING:
+      return <Loader2Icon className="size-5 text-blue-500 animate-spin" />;
+    default:
+      return <ClockIcon className="size-5 text-muted-foreground" />;
+  }
+};
+
+const formatStatus = (status: ExecutionStatus) => {
+  return status.charAt(0) + status.slice(1).toLowerCase();
+};
+
+export const ExecutionsItem = ({
+  data,
+}: {
+  data: Execution & {
+    workflow: {
+      id: string;
+      name: string;
+    };
+  };
+}) => {
+  const duration = data.completedAt
+    ? Math.round(
+        new Date(data.completedAt).getTime() -
+          new Date(data.startedAt).getTime(),
+      ) / 1000
+    : null;
+
+  const subtitle = (
+    <>
+      {data.workflow.name} &bull; Started{" "}
+      {formatDistanceToNow(data.startedAt, { addSuffix: true })}
+      {duration !== null && <>&bull; Took {duration}s</>}
+    </>
+  );
+  return (
+    <EntityItem
+      href={`/executions/${data.id}`}
+      title={formatStatus(data.status)}
+      subtitle={subtitle}
+      image={
+        <div className="size-8 flex items-center justify-center">
+          {getStatusIcon(data.status)}
+        </div>
+      }
+    />
+  );
+};
+
+export const ExecutionsList = () => {
+  const executions = useSuspenseExecutions();
+
+  return (
+    <EntityList
+      items={executions.data.items.filter(
+        (execution) => execution.workflow !== null,
+      )}
+      getKey={(execution) => execution.id}
+      renderItem={(execution) => {
+        return (
+          <ExecutionsItem
+            data={
+              execution as Execution & {
+                workflow: { id: string; name: string };
+              }
+            }
+          />
+        );
+      }}
+      emptyView={<ExecutionsEmpty />}
+    />
+  );
+};
+
+export const ExecutionsHeader = ({ disabled }: { disabled?: boolean }) => {
+  return (
+    <EntityHeader
+      title="Executions"
+      description="History of all your workflow executions."
+    />
+  );
+};
+
+export const ExecutionsPagination = () => {
+  const executions = useSuspenseExecutions();
+  const [params, setParams] = useExecutionsParams();
+
+  return (
+    <EntityPagination
+      page={executions.data.page}
+      totalPages={executions.data.totalPages}
+      disabled={executions.isFetching}
+      onPageChange={(page) => setParams({ ...params, page })}
+    />
+  );
+};
+
+export const ExecutionsContainer = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return (
+    <EntityContainer
+      header={<ExecutionsHeader />}
+      pagination={<ExecutionsPagination />}
+    >
+      {children}
+    </EntityContainer>
+  );
+};
+
+export const ExecutionsLoading = () => {
+  return <LoadingView entity="executions" />;
+};
+
+export const ExecutionsError = () => {
+  return <ErrorView message="Failed to load executions." />;
+};
+
+export const ExecutionsEmpty = () => {
+  return (
+    <EmptyView message="You haven't created any executions yet. Get started by running your workflow." />
+  );
+};
