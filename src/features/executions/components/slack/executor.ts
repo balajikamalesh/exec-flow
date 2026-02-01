@@ -54,7 +54,7 @@ export const slackExecutor: NodeExecutor<SlackData> = async ({
             status: "error",
           }),
         );
-        throw new NonRetriableError("Variable name is required.");
+        throw new NonRetriableError("Webhook URL is required.");
       }
 
       await ky.post(data.webhookUrl, {

@@ -43,16 +43,6 @@ export const discordExecutor: NodeExecutor<DiscordData> = async ({
     throw new NonRetriableError("Content is required.");
   }
 
-  if (!data.username) {
-    await publish(
-      discordChannel().status({
-        nodeId,
-        status: "error",
-      }),
-    );
-    throw new NonRetriableError("Username is required.");
-  }
-
   const rawContent = Handlebars.compile(data.content)(context);
   const content = decode(rawContent);
   const username = data.username
@@ -68,7 +58,7 @@ export const discordExecutor: NodeExecutor<DiscordData> = async ({
             status: "error",
           }),
         );
-        throw new NonRetriableError("Variable name is required.");
+        throw new NonRetriableError("webhookUrl is required.");
       }
 
       await ky.post(data.webhookUrl, {

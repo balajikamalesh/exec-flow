@@ -103,7 +103,7 @@ export const SlackDialog = ({
                   <Input {...field} placeholder="mySlack" />
                   <FormDescription>
                     Use this name to reference the result in other nodes:{" "}
-                    {`{{${watchVariableName}.text}}`}
+                    {`{{${watchVariableName}.content}}`}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
