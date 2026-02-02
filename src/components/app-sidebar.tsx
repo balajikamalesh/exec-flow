@@ -82,7 +82,7 @@ const AppSidebar = (props: Props) => {
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem className="pb-1" key={item.title}>
                     <SidebarMenuButton
                       tooltip={item.title}
                       isActive={

@@ -25,9 +25,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { loginSchema } from "@/types/login-form-type";
 import { authClient } from "@/lib/auth-client";
+import { signInGithub } from "../utils/signInGithub";
+import { signInGoogle } from "../utils/signInGoogle";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
@@ -43,19 +44,22 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    await authClient.signIn.email({
-      email: data.email,
-      password: data.password,
-      callbackURL: "/"
-    },{
-      onSuccess: () => {
-        toast.success("Logged in successfully!");
-        router.push("/");
+    await authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+        callbackURL: "/",
       },
-      onError: () => {
-        toast.error("Login failed");
+      {
+        onSuccess: () => {
+          toast.success("Logged in successfully!");
+          router.push("/");
+        },
+        onError: () => {
+          toast.error("Login failed");
+        },
       },
-    })
+    );
   };
 
   const isPending = form.formState.isSubmitting;
@@ -64,7 +68,10 @@ const LoginForm = () => {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
-          <CardTitle>Welcome Back to <span className="font-bold text-lg text-[#8a79ab]">ExecFlow</span></CardTitle>
+          <CardTitle>
+            Welcome Back to{" "}
+            <span className="font-bold text-lg text-[#8a79ab]">ExecFlow</span>
+          </CardTitle>
           <CardDescription>Login to Continue</CardDescription>
         </CardHeader>
         <CardContent>
@@ -77,8 +84,14 @@ const LoginForm = () => {
                     className="w-full"
                     type="button"
                     disabled={isPending}
+                    onClick={() => signInGithub(() => router.push("/"))}
                   >
-                    <Image src="/logo/github.svg" alt="Github logo" width={20} height={20} />
+                    <Image
+                      src="/logo/github.svg"
+                      alt="Github logo"
+                      width={20}
+                      height={20}
+                    />
                     Continue with Github
                   </Button>
                   <Button
@@ -86,8 +99,14 @@ const LoginForm = () => {
                     className="w-full"
                     type="button"
                     disabled={isPending}
+                    onClick={() => signInGoogle(() => router.push("/"))}
                   >
-                    <Image src="/logo/google.svg" alt="Google logo" width={20} height={20} />
+                    <Image
+                      src="/logo/google.svg"
+                      alt="Google logo"
+                      width={20}
+                      height={20}
+                    />
                     Continue with Google
                   </Button>
                 </div>
@@ -132,13 +151,13 @@ const LoginForm = () => {
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                        Don't have an account?{" "}
-                        <Link
-                          href="/register"
-                          className="underline underline-offset-4"
-                        >
-                          Sign up
-                        </Link>
+                  Don't have an account?{" "}
+                  <Link
+                    href="/register"
+                    className="underline underline-offset-4"
+                  >
+                    Sign up
+                  </Link>
                 </div>
               </div>
             </form>
