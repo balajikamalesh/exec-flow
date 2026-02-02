@@ -92,7 +92,14 @@ export const HttpRequestDialog = ({
         body: defaultBody ?? "",
       });
     }
-  }, [open, defaultEndpoint, defaultMethod, defaultBody, form]);
+  }, [
+    open,
+    defaultVariableName,
+    defaultEndpoint,
+    defaultMethod,
+    defaultBody,
+    form,
+  ]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

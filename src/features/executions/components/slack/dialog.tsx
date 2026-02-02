@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   Form,
-  FormControl,
   FormDescription,
   FormField,
   FormItem,
@@ -124,7 +123,8 @@ export const SlackDialog = ({
                     Webhooks
                   </FormDescription>
                   <FormDescription>
-                    Make sure the "key" is "content" in the workflow settings.
+                    Make sure the &quot;key&quot; is &quot;content&quot; in the
+                    workflow settings.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

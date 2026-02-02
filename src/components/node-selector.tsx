@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
+import Image from "next/image";
 import { useReactFlow } from "@xyflow/react";
 import { createId } from "@paralleldrive/cuid2";
 import { useCallback, type ComponentType, type ReactNode } from "react";
@@ -162,7 +163,7 @@ export function NodeSelector({
               >
                 <div className="flex items-center gap-6 w-full overflow-hidden">
                   {typeof nodeType.icon === "string" ? (
-                    <img
+                    <Image
                       src={nodeType.icon}
                       alt={nodeType.label}
                       className="size-5 object-contain rounded-sm"
@@ -195,7 +196,7 @@ export function NodeSelector({
               >
                 <div className="flex items-center gap-6 w-full overflow-hidden">
                   {typeof nodeType.icon === "string" ? (
-                    <img
+                    <Image
                       src={nodeType.icon}
                       alt={nodeType.label}
                       className="size-5 object-contain rounded-sm"

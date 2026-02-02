@@ -1,4 +1,4 @@
-import type { ComponentProps, HTMLAttributes } from "react";
+import type { ComponentProps } from "react";
 import { CheckCircle2Icon, Loader2Icon, XCircleIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -21,9 +21,15 @@ export function BaseNode({ className, status, ...props }: BaseNodeProps) {
       {...props}
     >
       {props.children}
-      {status === "error" && <XCircleIcon className="absolute right-0.5 bottom-0.5 size-2 text-red-700 stroke-3"/>}
-      {status === "success" && <CheckCircle2Icon className="absolute right-0.5 bottom-0.5 size-2 text-green-700 stroke-3"/>}
-      {status === "loading" && <Loader2Icon className="absolute -right-0.5 -bottom-0.5 size-2 text-blue-700 stroke-3 animate-spin"/>}
+      {status === "error" && (
+        <XCircleIcon className="absolute right-0.5 bottom-0.5 size-2 text-red-700 stroke-3" />
+      )}
+      {status === "success" && (
+        <CheckCircle2Icon className="absolute right-0.5 bottom-0.5 size-2 text-green-700 stroke-3" />
+      )}
+      {status === "loading" && (
+        <Loader2Icon className="absolute -right-0.5 -bottom-0.5 size-2 text-blue-700 stroke-3 animate-spin" />
+      )}
     </div>
   );
 }

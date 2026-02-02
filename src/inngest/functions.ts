@@ -18,8 +18,8 @@ import { slackChannel } from "./channels/slack";
 export const executeWorkFlow = inngest.createFunction(
   {
     id: "execute-workflow",
-    retries: 0,
-    onFailure: async ({ event, step }) => {
+    retries: process.env.NODE_ENV === "production" ? 3 : 0,
+    onFailure: async ({ event }) => {
       return db.execution.update({
         where: {
           inngestEventId: event.data.event.id,

@@ -39,7 +39,7 @@ export const useCreateWorkflow = () => {
         toast.success(`Workflow created successfully: ${newWorkflow.name}`);
         queryClient.invalidateQueries(trpc.workflows.getAll.queryOptions({}));
       },
-      onError: (error) => {
+      onError: () => {
         toast.error("Failed to create workflow: Active subscription required");
       },
     }),
@@ -53,7 +53,7 @@ export const useRemoveWorkflow = () => {
 
   return useMutation(
     trpc.workflows.remove.mutationOptions({
-      onSuccess: (data) => {
+      onSuccess: () => {
         toast.success(`Workflow deleted successfully.`);
         queryClient.invalidateQueries(trpc.workflows.getAll.queryOptions({}));
       },
@@ -123,7 +123,7 @@ export const useExecuteWorkflow = () => {
 
   return useMutation(
     trpc.workflows.execute.mutationOptions({
-      onSuccess: (data) => {
+      onSuccess: () => {
         toast.success(`Workflow executed successfully`);
       },
       onError: (error) => {

@@ -70,7 +70,7 @@ export const AnthropicNode = memo((props: NodeProps<AnthropicNodeType>) => {
         defaultCredentialId={nodedata?.credentialId}
         defaultVariableName={nodedata?.variableName}
         systemPrompt={nodedata?.systemPrompt}
-        userPrompt={nodedata?.userPrompt!}
+        userPrompt={nodedata?.userPrompt ?? ""}
       />
       <BaseExecutionNode
         {...props}

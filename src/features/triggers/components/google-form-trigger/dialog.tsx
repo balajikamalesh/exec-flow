@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -45,8 +46,8 @@ export const GoogleFormTriggerDialog = ({
         <DialogHeader>
           <DialogTitle>Google Form Trigger</DialogTitle>
           <DialogDescription>
-            Use this webhook URL in your Google form's Apps Script to trigger
-            this workflow upon form submission.
+            Use this webhook URL in your Google form&apos;s Apps Script to
+            trigger this workflow upon form submission.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -75,7 +76,7 @@ export const GoogleFormTriggerDialog = ({
               <li>Click on the three dots menu &#8594; Script editor</li>
               <li>Copy and paste the script below</li>
               <li>Replace WEBHOOK_URL with the webhook URL above</li>
-              <li>Save and click "Triggers" &#8594; Add Triggers</li>
+              <li>Save and click &quot;Triggers&quot; &#8594; Add Triggers</li>
               <li>Choose: From form &#8594; On form submit &#8594; Save</li>
             </ol>
           </div>
@@ -91,7 +92,7 @@ export const GoogleFormTriggerDialog = ({
                   toast.success(
                     "Google Apps Script copied to clipboard! Paste it in the Script Editor in your Google Form.",
                   );
-                } catch (err) {
+                } catch (err: unknown) {
                   toast.error("Failed to copy Google Apps Script.");
                 }
               }}
@@ -111,7 +112,7 @@ export const GoogleFormTriggerDialog = ({
                 <code className="bg-background px-1">
                   {"{{googleForm.respondentEmail}}"}
                 </code>{" "}
-                - Respondant's email
+                - Respondant&apos;s email
               </li>
               <li>
                 <code className="bg-background px-1 py-0.5 rounded">

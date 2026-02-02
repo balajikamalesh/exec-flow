@@ -124,7 +124,7 @@ export const openaiExecutor: NodeExecutor<OpenAIData> = async ({
         aiResponse: text,
       },
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     await publish(
       openaiChannel().status({
         nodeId,

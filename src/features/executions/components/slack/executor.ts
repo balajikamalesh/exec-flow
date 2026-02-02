@@ -88,7 +88,7 @@ export const slackExecutor: NodeExecutor<SlackData> = async ({
     );
 
     return result;
-  } catch (error: any) {
+  } catch (error: unknown) {
     await publish(
       slackChannel().status({
         nodeId,

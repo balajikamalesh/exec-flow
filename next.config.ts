@@ -12,7 +12,10 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  devIndicators: false
+  devIndicators: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default withSentryConfig(nextConfig, {

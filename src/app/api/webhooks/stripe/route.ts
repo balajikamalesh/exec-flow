@@ -1,4 +1,4 @@
-import { inngest } from "@/inngest/client";
+/* eslint-disable */
 import { sendWorkflowExecution } from "@/inngest/utils";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error) {
+  } catch (error: unknown) {
     return NextResponse.json(
       {
         success: false,

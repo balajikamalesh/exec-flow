@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import z from "zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   Form,
-  FormControl,
   FormDescription,
   FormField,
   FormItem,
@@ -170,7 +169,7 @@ export const DiscordDialog = ({
                   <FormLabel>Bot Username (Optional)</FormLabel>
                   <Input {...field} placeholder="Workflow Bot" />
                   <FormDescription>
-                    Override the webhook's default username.
+                    Override the webhook&apos;s default username.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

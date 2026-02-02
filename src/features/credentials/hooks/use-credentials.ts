@@ -57,7 +57,7 @@ export const useRemoveCredential = () => {
 
   return useMutation(
     trpc.credentials.remove.mutationOptions({
-      onSuccess: (data) => {
+      onSuccess: () => {
         toast.success(`Credential deleted successfully.`);
         queryClient.invalidateQueries(trpc.credentials.getAll.queryOptions({}));
       },

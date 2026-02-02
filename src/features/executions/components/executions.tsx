@@ -102,7 +102,7 @@ export const ExecutionsList = () => {
   );
 };
 
-export const ExecutionsHeader = ({ disabled }: { disabled?: boolean }) => {
+export const ExecutionsHeader = () => {
   return (
     <EntityHeader
       title="Executions"

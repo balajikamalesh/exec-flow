@@ -124,7 +124,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
         aiResponse: text,
       },
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     await publish(
       geminiChannel().status({
         nodeId,

@@ -24,7 +24,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
-import { usehasActiveSubscription } from "@/features/subscriptions/hooks/use-subscriptions";
+import { useHasActiveSubscription } from "@/features/subscriptions/hooks/use-subscriptions";
 
 const menuItems = [
   {
@@ -49,12 +49,10 @@ const menuItems = [
   },
 ];
 
-type Props = {};
-
-const AppSidebar = (props: Props) => {
+const AppSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { hasActiveSubscription, isLoading } = usehasActiveSubscription();
+  const { hasActiveSubscription, isLoading } = useHasActiveSubscription();
 
   return (
     <Sidebar collapsible="icon">

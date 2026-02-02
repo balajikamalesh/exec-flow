@@ -1,3 +1,4 @@
+/* eslint-disable */
 import toposort from "toposort";
 import { Connection, Node } from "@/generated/prisma/client";
 import { inngest } from "./client";

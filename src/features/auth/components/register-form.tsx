@@ -57,7 +57,7 @@ const RegisterForm = () => {
           toast.success("User registered successfully");
           router.push("/");
         },
-        onError: (error) => {
+        onError: () => {
           toast.error("Registration failed. Please try again.");
         },
       },

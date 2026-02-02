@@ -110,7 +110,15 @@ export const OpenAIDialog = ({
         systemPrompt: systemPrompt ?? "",
       });
     }
-  }, [open, defaultModel, defaultVariableName, systemPrompt, userPrompt, form]);
+  }, [
+    open,
+    defaultCredentialId,
+    defaultModel,
+    defaultVariableName,
+    systemPrompt,
+    userPrompt,
+    form,
+  ]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

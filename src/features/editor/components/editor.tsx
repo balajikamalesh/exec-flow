@@ -66,8 +66,8 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
     y: Math.round(position.y / GRID) * GRID,
   });
 
-  // for smmoother dragging experience, but align to grid on drag stop
-  const onNodeDragStop = (_: any, node: Node) => {
+  // for smooother dragging experience, but align to grid on drag stop
+  const onNodeDragStop = (_: unknown, node: Node) => {
     setNodes((nds) =>
       nds.map((n) =>
         n.id === node.id ? { ...n, position: snapToGrid(node.position) } : n,
@@ -76,7 +76,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
   };
 
   const hasManualTrigger = useMemo(() => {
-    return nodes.some(node => node.type === NodeType.MANUAL_TRIGGER);
+    return nodes.some((node) => node.type === NodeType.MANUAL_TRIGGER);
   }, [nodes]);
 
   return (
@@ -95,10 +95,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         selectionOnDrag
         fitView
       >
-        <Background
-          gap={20}
-          size={1}
-        />
+        <Background gap={20} size={1} />
         <Controls />
         <MiniMap />
         <Panel position="top-right">

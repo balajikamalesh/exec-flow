@@ -128,7 +128,7 @@ export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
         aiResponse: text,
       },
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     await publish(
       anthropicChannel().status({
         nodeId,

@@ -1,8 +1,6 @@
 import React from "react";
 
 import AppHeader from "@/components/app-header";
-import AppSidebar from "@/components/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 type Props = {
   children: React.ReactNode;
@@ -11,8 +9,8 @@ type Props = {
 const Layout = ({ children }: Props) => {
   return (
     <>
-    <AppHeader />
-    <main className="flex-1">{children}</main>
+      <AppHeader />
+      <main className="flex-1">{children}</main>
     </>
   );
 };

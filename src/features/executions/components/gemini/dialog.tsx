@@ -109,7 +109,15 @@ export const GeminiDialog = ({
         systemPrompt: systemPrompt ?? "",
       });
     }
-  }, [open, defaultModel, defaultVariableName, systemPrompt, userPrompt, form]);
+  }, [
+    open,
+    defaultModel,
+    defaultCredentialId,
+    defaultVariableName,
+    systemPrompt,
+    userPrompt,
+    form,
+  ]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

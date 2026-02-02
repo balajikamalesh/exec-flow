@@ -93,7 +93,7 @@ export const discordExecutor: NodeExecutor<DiscordData> = async ({
     );
 
     return result;
-  } catch (error: any) {
+  } catch (error: unknown) {
     await publish(
       discordChannel().status({
         nodeId,

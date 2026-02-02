@@ -70,7 +70,7 @@ export const OpenAINode = memo((props: NodeProps<OpenAINodeType>) => {
         defaultModel={nodedata?.model}
         defaultVariableName={nodedata?.variableName}
         systemPrompt={nodedata?.systemPrompt}
-        userPrompt={nodedata?.userPrompt!}
+        userPrompt={nodedata?.userPrompt ?? ""}
       />
       <BaseExecutionNode
         {...props}
