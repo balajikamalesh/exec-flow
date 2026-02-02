@@ -40,9 +40,7 @@ export const useCreateWorkflow = () => {
         queryClient.invalidateQueries(trpc.workflows.getAll.queryOptions({}));
       },
       onError: (error) => {
-        toast.error(
-          `Failed to create workflow: ${getErrorMessage(error.message)}`,
-        );
+        toast.error("Failed to create workflow: Active subscription required");
       },
     }),
   );
@@ -119,7 +117,7 @@ export const useUpdateWorkflow = () => {
   );
 };
 
-// Hook to execute a workflow 
+// Hook to execute a workflow
 export const useExecuteWorkflow = () => {
   const trpc = useTRPC();
 
