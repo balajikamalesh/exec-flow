@@ -4,8 +4,9 @@ import { NonRetriableError } from "inngest";
 import { createOpenAI } from "@ai-sdk/openai";
 
 import db from "@/lib/db";
-import type { NodeExecutor } from "@/features/executions/types";
+import { decrypt } from "@/lib/encryption";
 import { openaiChannel } from "@/inngest/channels/openai";
+import type { NodeExecutor } from "@/features/executions/types";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -92,7 +93,7 @@ export const openaiExecutor: NodeExecutor<OpenAIData> = async ({
   }
 
   const openai = createOpenAI({
-    apiKey: credential.value,
+    apiKey: decrypt(credential.value),
   });
 
   try {

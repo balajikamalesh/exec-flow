@@ -41,7 +41,6 @@ const HttpRequestDialogSchema = z.object({
   endpoint: z.string().min(1, { message: "Invalid URL" }),
   method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
   body: z.string().optional(),
-  // .refine TODO JSON5
 });
 
 export type HttpRequestFormType = z.infer<typeof HttpRequestDialogSchema>;

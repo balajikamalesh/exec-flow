@@ -39,7 +39,6 @@ import {
 } from "../hooks/use-credentials";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
 import Link from "next/link";
-import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -112,7 +111,11 @@ export const CredentialForm = ({ initialData }: CredentialFormProps) => {
           handleError(error);
         },
         onSuccess: (data) => {
-          router.push(`/credentials/${data.id}`);
+          if (isEdit) {
+            router.push(`/credentials`);
+          } else {
+            router.push(`/credentials/${data.id}`);
+          }
         },
       });
     }
