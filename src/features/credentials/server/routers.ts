@@ -7,7 +7,7 @@ import {
   protectedProcedure,
 } from "@/trpc/init";
 import { PAGINATION } from "@/config/constants";
-import { CredentialType } from "@/generated/prisma/enums";
+import { CredentialType } from "@/generated/prisma";
 import { encrypt } from "@/lib/encryption";
 
 export const CredentialsRouter = createTRPCRouter({

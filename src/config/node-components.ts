@@ -1,6 +1,6 @@
 import type { NodeTypes } from "@xyflow/react";
 
-import { NodeType } from "@/generated/prisma/enums";
+import { NodeType } from "@/generated/prisma";
 import { InitialNode } from "@/components/initial-node";
 import { GeminiNode } from "@/features/executions/components/gemini/node";
 import { HttpRequestNode } from "@/features/executions/components/http-request/node";

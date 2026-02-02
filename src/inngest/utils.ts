@@ -1,6 +1,6 @@
 /* eslint-disable */
 import toposort from "toposort";
-import { Connection, Node } from "@/generated/prisma/client";
+import { Connection, Node } from "@/generated/prisma";
 import { inngest } from "./client";
 import { createId } from "@paralleldrive/cuid2";
 

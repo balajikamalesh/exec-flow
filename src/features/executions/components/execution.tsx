@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 
-import { ExecutionStatus } from "@/generated/prisma/enums";
+import { ExecutionStatus } from "@/generated/prisma";
 import { useSuspenseExecution } from "../hooks/use-executions";
 import {
   Card,

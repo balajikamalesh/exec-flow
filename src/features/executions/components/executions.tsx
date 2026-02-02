@@ -20,7 +20,8 @@ import {
 } from "@/components/entity-components";
 import { useSuspenseExecutions } from "../hooks/use-executions";
 import { useExecutionsParams } from "../hooks/use-executions-params";
-import { ExecutionStatus, type Execution } from "@/generated/prisma/browser";
+import { ExecutionStatus } from "@/generated/prisma";
+import { type Execution } from "@/generated/prisma";
 
 const getStatusIcon = (status: ExecutionStatus) => {
   switch (status) {

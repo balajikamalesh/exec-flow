@@ -31,7 +31,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { CredentialType } from "@/generated/prisma/enums";
+import { CredentialType } from "@/generated/prisma";
 import {
   useCreateCredential,
   useUpdateCredential,
